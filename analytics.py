@@ -1,21 +1,3 @@
-# def calculate_metrics(data):
-#     latest = data.iloc[-1]
-#     previous = data.iloc[-2]
-
-#     price = latest["Close"]
-#     change = price - previous["Close"]
-#     percent = (change / previous["Close"]) * 100
-#     volume = latest["Volume"]
-
-#     sma_5 = data["Close"].rolling(window=5).mean().iloc[-1]
-
-#     return {
-#         "price": round(price, 2),
-#         "change": round(change, 2),
-#         "percent": round(percent, 2),
-#         "volume": int(volume),
-#         "sma_5": round(sma_5, 2)
-#     }
 import pandas as pd
 
 def calculate_rsi(data, window=14):
@@ -53,3 +35,4 @@ def calculate_metrics(data):
         "sma_5": round(sma_5, 2),
         "rsi": rsi
     }
+    
