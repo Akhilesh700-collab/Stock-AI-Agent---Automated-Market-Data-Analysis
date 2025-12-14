@@ -12,3 +12,12 @@ and RSI-driven predictions, and generates automated reports.
 - Automated reporting
 
 ## Project Structure
+```stock-ai-agent/
+├── main.py              # Main controller to run the agent
+├── data_fetcher.py      # Fetches stock market data from public APIs
+├── analytics.py         # Calculates metrics like SMA and RSI
+├── agent.py             # Applies heuristic-based prediction logic
+├── report.py            # Dumps summary report to console
+├── requirements.txt     # Project dependencies
+├── DESIGN_DOCUMENT.md   # Design and rationale documentation
+└── README.md            # Project overview and usage instructions```
