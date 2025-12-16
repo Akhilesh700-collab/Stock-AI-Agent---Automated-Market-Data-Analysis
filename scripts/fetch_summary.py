@@ -10,7 +10,8 @@ TICKERS = ["AAPL", "MSFT", "GOOGL"]
 def calculate_sma(series, window):
     if len(series) < window:
         return None
-    return series.rolling(window=window).mean().iloc[-1]
+    sma = series.rolling(window=window).mean().iloc[-1]
+    return float(sma)
 
 
 def calculate_rsi(series, period=14):
@@ -22,7 +23,7 @@ def calculate_rsi(series, period=14):
     rs = gain / loss
     rsi = 100 - (100 / (1 + rs))
 
-    return rsi.iloc[-1]
+    return float(rsi.iloc[-1])
 
 
 def generate_signal(close_prices):
@@ -43,11 +44,27 @@ def generate_signal(close_prices):
 
 
 def fetch_stock_data(ticker):
-    data = yf.Ticker(ticker).history(period="90d")  
-    if data.empty:
+    try:
+        data = yf.download(
+        ticker,
+        period="90d",
+        interval="1d",
+        auto_adjust=False,
+        progress=False
+    )
+    except Exception as e:
+        print(f"Network/API error for {ticker}: {e}")
+        return None
+    if data is None or data.empty:
+        return None
+    if "Close" not in data or "Volume" not in data:
+        return None
+    if len(data) < 50:
         return None
 
     close_prices = data["Close"]
+    if close_prices.empty:
+        return None
 
     latest_close = close_prices.iloc[-1]
     volume = data["Volume"].iloc[-1]
@@ -65,8 +82,6 @@ def fetch_stock_data(ticker):
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
 
-
-
 def print_summary():
     print("=" * 80)
     print(f"Run at: {datetime.now()}")
@@ -74,6 +89,7 @@ def print_summary():
 
     for ticker in TICKERS:
         info = fetch_stock_data(ticker)
+        time.sleep(2)
 
         if info:
             print(
