@@ -1,27 +1,38 @@
-
-import time
-from data_fetcher import fetch_stock_data
-from analytics import calculate_metrics
-from agent import predict_trend
-from report import print_report
+from scripts.universe import get_stock_universe
+from scripts.stock_selector import auto_select_stocks
 from scripts.ml_predictor import run_ml_prediction
+from scripts.signal_engine import generate_signal
+from scripts.report_writer import save_report
 
-STOCK_SYMBOL = "AAPL"
-REFRESH_SECONDS = 60
-ml_result = run_ml_prediction("AAPL")
+def run_agent():
+    universe = get_stock_universe(limit=50)
+    trade_candidates = auto_select_stocks(universe, top_n=10)
 
-print("Stock AI Agent started...")
-print("\n MACHINE LEARNING PREDICTION")
-print("Predicted Next Day Price:", ml_result["predicted_price"])
-print("Model MSE:", ml_result["mse"])
+    print("\n✅ Selected stocks for analysis:", trade_candidates)
 
-while True:
-    data = fetch_stock_data(STOCK_SYMBOL)
-    metrics = calculate_metrics(data)
-    prediction = predict_trend(metrics)
-    print_report(STOCK_SYMBOL, metrics, prediction)
+    for symbol in trade_candidates:
+        ml_result = run_ml_prediction(symbol)
 
-    time.sleep(REFRESH_SECONDS) 
-    
+        if ml_result is None:
+            continue
 
-    
+        signal_data = generate_signal(
+            ml_result["current_price"],
+            ml_result["predicted_price"]
+        )
+
+        save_report(
+            symbol=ml_result["symbol"],
+            current_price=ml_result["current_price"],
+            predicted_price=ml_result["predicted_price"],
+            signal=signal_data["signal"],
+            confidence=signal_data["confidence"]
+        )
+
+        print(
+            f"📌 {symbol} → {signal_data['signal']} "
+            f"(Confidence: {signal_data['confidence']}%)"
+        )
+
+if __name__ == "__main__":
+    run_agent()
