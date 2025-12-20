@@ -77,3 +77,14 @@ This system behaves like an AI agent because it:
 
 plt.savefig("results/price_trend.png")
 plt.show()
+
+##  Architecture of Automation
+Scheduler (Cron / Task Scheduler)
+        ↓
+Python Script (fetch_stock_data.py)
+        ↓
+Yahoo Finance API
+        ↓
+Data Processing (Pandas / NumPy)
+        ↓
+Store / Report / Prediction

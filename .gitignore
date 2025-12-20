@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Reports (optional: keep or ignore)
+reports/
+
+# OS files
+.DS_Store
+Thumbs.db
+
